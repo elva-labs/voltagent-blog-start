@@ -6,7 +6,6 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY yarn.lock* ./
 COPY pnpm-lock.yaml* ./
 
 # Install dependencies based on lock file
@@ -35,7 +34,6 @@ WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
-COPY yarn.lock* ./
 COPY pnpm-lock.yaml* ./
 
 # Install production dependencies only
@@ -48,6 +46,9 @@ COPY --from=builder --chown=nodejs:nodejs /app/dist ./dist
 
 # Copy .env file if it exists (dotenv will read it automatically)
 COPY --chown=nodejs:nodejs .env* ./
+
+# Ensure the working directory is owned by nodejs user
+RUN chown -R nodejs:nodejs /app
 
 # Switch to non-root user
 USER nodejs

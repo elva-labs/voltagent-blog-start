@@ -1,187 +1,123 @@
-<div align="center">
-  <h1>⚡ my-agent-app</h1>
-  <p>AI Agent powered by <a href="https://voltagent.dev">VoltAgent</a></p>
-  
-  <p>
-    <a href="https://github.com/voltagent/voltagent"><img src="https://img.shields.io/badge/built%20with-VoltAgent-blue" alt="Built with VoltAgent" /></a>
-    <a href="https://nodejs.org"><img src="https://img.shields.io/badge/node-%3E%3D22-brightgreen" alt="Node Version" /></a>
-  </p>
-</div>
+# AI Agent Starter Project
 
-## 🚀 Quick Start
+A reference implementation demonstrating how to build production-ready AI agents with autonomous task execution capabilities.
 
-### Prerequisites
+> **Note:** This project accompanies the blog article ["Robots Are Taking Our Jobs: Understanding AI Agents"](https://blog.example.com/robots-taking-jobs-ai-agents) _(coming soon)_
 
-- Node.js 20+ 
+## What This Project Demonstrates
+
+This starter kit shows you how to build an AI agent that:
+
+- Executes multi-step tasks autonomously
+- Uses fictional tools to retrieve information
+- Maintains conversation context and memory
+- Runs in a dockerized enivronment
+- Uses a supervisor pattern with specific subagent for specific tasks
+
+Built with [VoltAgent](https://voltagent.dev) and deployed using [SST](https://sst.dev), this project provides a foundation for creating your own custom agents.
+
+## Prerequisites
+
+- Node.js 20+
 - Git
-- Anthropic API Key (optional - can configure later)
-  - Get your key at: https://console.anthropic.com/settings/keys
+- pnpm (install with `npm install -g pnpm`)
+- AWS Account (for deployment and bedrock access)
 
-### Installation
+## Local Development
+
+### Step 1: Clone and Install
 
 ```bash
-# Clone the repository (if not created via create-voltagent-app)
+# Clone the repository
 git clone <your-repo-url>
 cd my-agent-app
 
 # Install dependencies
-npm install
-
-# Copy environment variables
-cp .env.example .env
+pnpm install
 ```
 
-### Configuration
+### Step 2: Set up AWS Credentials
 
-Edit `.env` file with your API keys:
+This project uses AWS and AWS Bedrock for access to an LLM.
+Set up your credentials for your AWS account with access to AWS Bedrock as environment variables.
 
-```env
-ANTHROPIC_API_KEY=your-api-key-here
+A tip, checkout [sesh](https://github.com/elva-labs/awsesh) which is an excellent tool for accessing multiple AWS accounts.
 
-# VoltOps Platform (Optional)
-# Get your keys at https://console.voltagent.dev/tracing-setup
-# VOLTAGENT_PUBLIC_KEY=your-public-key
-# VOLTAGENT_SECRET_KEY=your-secret-key
-```
+If you prefer other providers, checkout the [VoltAgent](https://voltagent.dev) docs how to reconfigure the model.
 
-### Running the Application
+### Step 3: Run Locally
 
 ```bash
-# Development mode (with hot reload)
-npm run dev
-
-# Production build
-npm run build
-
-# Start production server
-npm start
+# Start development server with hot reload
+pnpm dev
 ```
 
-## 🎯 Features
+Your agent is now running at `http://localhost:3141` which exposes and API and API docs, VoltAgent comes with a really nice
+console which is referenced via the termonal output to test the agents out.
 
-This VoltAgent application includes:
+### Step 4: Test Your Agent
 
-- **AI Agent**: Powered by Anthropic (Claude 3.5 Sonnet)
-- **Workflows**: Pre-configured expense approval workflow
-- **Memory**: Built-in conversation history
-- **Tools**: Extensible tool system
-- **Type Safety**: Full TypeScript support
+The agent includes example tools and workflows. You can interact with it via HTTP requests or integrate it into your applications.
 
-## 🔍 VoltOps Platform
+Example tools included:
 
-### Local Development
-The VoltOps Platform provides real-time observability for your agents during development:
+- **Weather Tool**: Demonstrates external API integration
+- **Meme agent** Which only return reponses in memes
+- Custom tools can be added in `src/tools/`
 
-1. **Start your agent**: Run `npm run dev`
-2. **Open console**: Visit [console.voltagent.dev](https://console.voltagent.dev)
-3. **Auto-connect**: The console connects to your local agent at `http://localhost:3141`
+## Deployment to AWS
 
-Features:
-- 🔍 Real-time execution visualization
-- 🐛 Step-by-step debugging
-- 📊 Performance insights
-- 💾 No data leaves your machine
+This project uses [SST (Serverless Stack)](https://sst.dev) for deployment, which creates a serverless API running your agent.
 
-### Production Monitoring
-For production environments, configure VoltOpsClient:
+### AWS Resources Created
 
-1. **Create a project**: Sign up at [console.voltagent.dev/tracing-setup](https://console.voltagent.dev/tracing-setup)
-2. **Get your keys**: Copy your Public and Secret keys
-3. **Add to .env**:
-   ```env
-   VOLTAGENT_PUBLIC_KEY=your-public-key
-   VOLTAGENT_SECRET_KEY=your-secret-key
-   ```
-4. **Configure in code**: The template already includes VoltOpsClient setup!
+The deployment uses a ECS and fargate which is a very cheap way of hosting your docker containers, but this still has a ticking cost. Make sure to tear down your stack if you are just playing around.
 
-## 📁 Project Structure
+### Step 1: Configure AWS Credentials
 
-```
-my-agent-app/
-├── src/
-│   ├── index.ts          # Main agent configuration
-│   ├── tools/            # Custom tools
-│   │   ├── index.ts      # Tool exports
-│   │   └── weather.ts    # Weather tool example
-│   └── workflows/        # Workflow definitions
-│       └── index.ts      # Expense approval workflow
-├── dist/                 # Compiled output (after build)
-├── .env                  # Environment variables
-├── .voltagent/           # Agent memory storage
-├── Dockerfile            # Production deployment
-├── package.json
-└── tsconfig.json
-```
-
-## 🧪 Testing Workflows
-
-The included expense approval workflow has test scenarios:
-
-### Scenario 1: Auto-approved (< $500)
-```json
-{
-  "employeeId": "EMP-123",
-  "amount": 250,
-  "category": "office-supplies",
-  "description": "New laptop mouse and keyboard"
-}
-```
-
-### Scenario 2: Manager approval required ($500-$5000)
-```json
-{
-  "employeeId": "EMP-456",
-  "amount": 3500,
-  "category": "travel",
-  "description": "Conference registration and hotel"
-}
-```
-
-### Scenario 3: Director approval required (> $5000)
-```json
-{
-  "employeeId": "EMP-789",
-  "amount": 15000,
-  "category": "equipment",
-  "description": "New server hardware"
-}
-```
-
-## 🐳 Docker Deployment
-
-Build and run with Docker:
+Ensure you have AWS credentials configured:
 
 ```bash
-# Build image
-docker build -t my-agent-app .
+# Option 1: Using AWS CLI
+aws configure
 
-# Run container
-docker run -p 3141:3141 --env-file .env my-agent-app
-
-# Or use docker-compose
-docker-compose up
+# Option 2: Set environment variables
+export AWS_ACCESS_KEY_ID=your-access-key
+export AWS_SECRET_ACCESS_KEY=your-secret-key
+export AWS_REGION=us-east-1
 ```
 
-## 🛠️ Development
+### Step 2: Deploy
 
-### Available Scripts
+```bash
+# Deploy to your AWS account
+pnpm sst deploy
+```
 
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm start` - Run production build
-- `npm run volt` - VoltAgent CLI tools
+The deployment will output your API endpoint URL. Your agent is now accessible via this public endpoint.
+
+### Step 3: Remove Stack When Done
+
+**Important:** To avoid ongoing AWS charges, remove the stack when you're finished:
+
+```bash
+# Remove all AWS resources
+pnpm sst remove
+```
+
+## Extending Your Agent
 
 ### Adding Custom Tools
 
 Create new tools in `src/tools/`:
 
 ```typescript
-import { createTool } from '@voltagent/core';
-import { z } from 'zod';
+import { createTool } from "@voltagent/core";
+import { z } from "zod";
 
 export const myTool = createTool({
-  name: 'myTool',
-  description: 'Description of what this tool does',
+  name: "myTool",
+  description: "Description of what this tool does",
   input: z.object({
     param: z.string(),
   }),
@@ -193,59 +129,54 @@ export const myTool = createTool({
 });
 ```
 
-### Creating New Workflows
+Then export it from `src/tools/index.ts` and register it in `src/index.ts`.
 
-Add workflows in `src/workflows/`:
+### Connecting to External Systems
 
-```typescript
-import { createWorkflowChain } from '@voltagent/core';
-import { z } from 'zod';
+Tools can interact with any external system:
 
-export const myWorkflow = createWorkflowChain({
-  id: "my-workflow",
-  name: "My Custom Workflow",
-  purpose: "Description of what this workflow does",
-  input: z.object({
-    data: z.string(),
-  }),
-  result: z.object({
-    output: z.string(),
-  }),
-})
-  .andThen({
-    id: "process-data",
-    execute: async ({ data }) => {
-      // Process the input
-      const processed = data.toUpperCase();
-      return { processed };
-    },
-  })
-  .andThen({
-    id: "final-step",
-    execute: async ({ data }) => {
-      // Final transformation
-      return { output: `Result: ${data.processed}` };
-    },
-  });
+- APIs and webhooks
+- Databases
+- Cloud services (S3, DynamoDB, etc.)
+- Third-party integrations (Stripe, SendGrid, etc.)
+
+See the weather tool (`src/tools/weather.ts`) for an example of external API integration.
+
+## Docker Deployment
+
+Alternative deployment option using Docker:
+
+```bash
+# Build image
+docker build -t my-agent-app .
+
+# Run container
+docker run -p 3141:3141 --env-file .env my-agent-app
 ```
 
-## 📚 Resources
+## Learn More
 
-- **Documentation**: [voltagent.dev/docs](https://voltagent.dev/docs/)
-- **Examples**: [github.com/VoltAgent/voltagent/tree/main/examples](https://github.com/VoltAgent/voltagent/tree/main/examples)
-- **Discord**: [Join our community](https://s.voltagent.dev/discord)
-- **Blog**: [voltagent.dev/](https://voltagent.dev/blog/)
+### About VoltAgent
 
-## 🤝 Contributing
+- **Documentation**: [voltagent.dev](https://voltagent.dev)
+- **Examples**: [github.com/VoltAgent/voltagent](https://github.com/VoltAgent/voltagent)
+- **Community**: [VoltAgent Discord](https://s.voltagent.dev/discord)
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+### About SST (Serverless Stack)
 
-## 📄 License
+- **Documentation**: [sst.dev](https://sst.dev)
+- **Getting Started**: [sst.dev/docs](https://sst.dev/docs)
+- **Discord Community**: [SST Discord](https://sst.dev/discord)
 
-MIT License - see LICENSE file for details
+### Related Articles
 
----
+- [Moving Past the AI Hype: Introducing MCP](https://blog.elva-group.com/moving-past-the-ai-hype-introducing-mcp)
+- [Solving AI Context with MCP Servers](https://blog.elva-group.com/solving-ai-context-with-mcp-servers)
 
-<div align="center">
-  <p>Built with ❤️ using <a href="https://voltagent.dev">VoltAgent</a></p>
-</div>
+## Available Scripts
+
+- `pnpm dev` - Start development server with hot reload
+- `pnpm build` - Build for production
+- `pnpm start` - Run production build locally
+- `pnpm sst deploy` - Deploy to AWS
+- `pnpm sst remove` - Remove AWS resources

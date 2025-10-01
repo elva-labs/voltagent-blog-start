@@ -153,3 +153,6 @@ dist
 
 # cursor
 .cursor
+
+# sst
+.sst

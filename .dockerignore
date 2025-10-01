@@ -47,3 +47,6 @@ docs
 .github
 .gitlab-ci.yml
 .travis.yml
+
+# sst
+.sst
