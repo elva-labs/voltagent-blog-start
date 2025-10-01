@@ -2,7 +2,7 @@
 
 A reference implementation demonstrating how to build production-ready AI agents with autonomous task execution capabilities.
 
-> **Note:** This project accompanies the blog article ["Robots Are Taking Our Jobs: Understanding AI Agents"](https://blog.example.com/robots-taking-jobs-ai-agents) _(coming soon)_
+> **Note:** This project accompanies the blog article ["Robots Are Taking Our Jobs: Understanding AI Agents"](https://blog.elva-group.com/robots-are-taking-our-jobs)
 
 ## What This Project Demonstrates
 
